@@ -1,0 +1,9 @@
+
+@import "tailwindcss";
+@import "flowbite-react/plugin/tailwindcss";
+@source "../.flowbite-react/class-list.json";
+
+body{
+    background-color: black;
+    color: whitesmoke;
+}
