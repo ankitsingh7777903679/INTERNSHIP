@@ -9,4 +9,5 @@ StudentRouter.put('/update/:id', studentUpdate)
 StudentRouter.put('/delete/:id', studentDelete)
 StudentRouter.put('/setStatus/:id', studentSetStatus)
 
+
 module.exports = StudentRouter
