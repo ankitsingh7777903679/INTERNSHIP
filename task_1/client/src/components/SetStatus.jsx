@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { studentSetStatus } from '../api/studentService';
 
-function SetStatus({studentStatus, student, loadData}) {
+function SetStatus({studentStatus, student, loadData, onStatusChange}) {
     const [statusValue, setStatusValue] = useState(studentStatus || 'pending');
 
     useEffect(() => {
