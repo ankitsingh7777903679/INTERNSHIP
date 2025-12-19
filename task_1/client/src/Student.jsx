@@ -3,6 +3,7 @@ import { Button, Label, TextInput } from "flowbite-react";
 import { addStudent, updateStudent } from './api/studentService';
 import StudentTable from './components/StudentTable';
 import { validateStudentForm } from './validation/studentValidation';
+import { getStreams } from './api/acadmicService';
 
 
 function Student() {
@@ -38,51 +39,67 @@ function Student() {
 
   const formSubmit = async (e) => {
     e.preventDefault();
-    
+
     const validationErrors = validateStudentForm(formData)
-    if(validationErrors){
+    if (validationErrors) {
       setError(validationErrors)
       return
     }
 
     // if (Object.keys(formErrors).length === 0) {
-      // console.log('Form submitted:', formData);
-      // Add your API call here
-      let result;
-      if (student._id) {
-        console.log('Updating student with id:', student._id);
-        result = await updateStudent(student._id, formData)
-        console.log('Update result:', result.message);
-        if (result.status === true) {
-          alert(result.message);
-          setFormData({ name: '', email: '', phone: '' })
-          setStudent({})
-          setRefresh(!refresh)
-        }
-        else {
-          alert(result.message)
-        }
+    // console.log('Form submitted:', formData);
+    // Add your API call here
+    let result;
+    if (student._id) {
+      console.log('Updating student with id:', student._id);
+      result = await updateStudent(student._id, formData)
+      console.log('Update result:', result.message);
+      if (result.status === true) {
+        alert(result.message);
+        setFormData({ name: '', email: '', phone: '' })
+        setStudent({})
+        setRefresh(!refresh)
       }
       else {
-        result = await addStudent(formData)
-
-        if (result.status === true) {
-          alert(result.message);
-          setFormData({ name: '', email: '', phone: '' })
-          setRefresh(!refresh)
-        }
-        else {
-          alert(result.message)
-        }
+        alert(result.message)
       }
+    }
+    else {
+      result = await addStudent(formData)
+
+      if (result.status === true) {
+        alert(result.message);
+
+        setFormData({ name: '', email: '', phone: '' })
+        setRefresh(!refresh)
+      }
+      else {
+        alert(result.message)
+      }
+    }
 
 
     // }
   }
-
+  
+  const getvalsum = async () => {
+    console.log("call stream")
+    let data =await getStreams()
+    console.log(data);
+  }
   return (
+
+
+
+
     <div className='bg-gray-500 p-4 rounded grid grid-cols-[30%_auto]'>
+
+
+
+
       <div>
+        <button onClick={getvalsum}>click me</button>
+
         <h2 className='text-3xl font-bold text-center mb-3 text-white'>Student</h2>
         <form className="flex max-w-md flex-col gap-4" onSubmit={formSubmit}>
           <div>
