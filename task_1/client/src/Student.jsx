@@ -52,7 +52,7 @@ function Student() {
       if (student._id) {
         console.log('Updating student with id:', student._id);
         result = await updateStudent(student._id, formData)
-        console.log('Update result:', result);
+        console.log('Update result:', result.message);
         if (result.status === true) {
           alert(result.message);
           setFormData({ name: '', email: '', phone: '' })
@@ -60,7 +60,7 @@ function Student() {
           setRefresh(!refresh)
         }
         else {
-          alert(result.err)
+          alert(result.message)
         }
       }
       else {
