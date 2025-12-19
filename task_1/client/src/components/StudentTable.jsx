@@ -8,7 +8,7 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh }) {
     const [students, setStudents] = useState([])
     const [filter, setFilter] = useState('pending')
     const [searchQuery, setSearchQuery] = useState('')
-    console.log('Filter value:', filter);
+    // console.log('Filter value:', filter);
     const loadData = async () => {
         try {
             const res = await getStudents();
@@ -71,7 +71,7 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh }) {
 
     }
     );
-    console.log('Filtered Students:', filteredStudents);
+    // console.log('Filtered Students:', filteredStudents);
 
     return (
         <div>
@@ -99,7 +99,6 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh }) {
             </div>
             {/* search */}
             
-
             <div className="overflow-x-auto rounded p-3">
                 <Table hoverable>
                     <TableHead>
