@@ -12,7 +12,7 @@ function StudentTable({setStudent, student, setFormData, formData, refresh}) {
     const loadData = async () => {
         try {
             const res = await getStudents();
-            if (res.status === 1) {
+            if (res.status === true) {
                 setStudents(res.data)
             }
         } catch (err) {
@@ -28,7 +28,7 @@ function StudentTable({setStudent, student, setFormData, formData, refresh}) {
         try {
             console.log('Deleting student with id:', id);
             const res = await deleteStudent(id)
-            if( res.status === 1){
+            if( res.status === true){
                 alert(res.message);
                 loadData();
             }
@@ -41,9 +41,15 @@ function StudentTable({setStudent, student, setFormData, formData, refresh}) {
         try {
              console.log('select one student with id:', id);
             const res = await getStudentOne(id)
-            if( res.status === 1){
+            if( res.status === true){
                 setStudent(res.data);
-                setFormData(res.data);
+                // Only set the fields needed for the form
+                setFormData({
+                    name: res.data.name,
+                    email: res.data.email,
+                    phone: String(res.data.phone)
+                });
+                // });
             }
         } catch (err) {
             console.log("Error deleting student:", err);

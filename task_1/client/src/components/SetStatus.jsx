@@ -41,6 +41,7 @@ function SetStatus({studentStatus, student, loadData}) {
             <select 
                 value={statusValue}
                 onChange={statusChange}
+                disabled={student.status === 'delete'}
                 className={`font-medium border rounded text-sm p-1 ${getStatusStyle(statusValue)}`}
             >
                 {statusOptions.map((option) => (
