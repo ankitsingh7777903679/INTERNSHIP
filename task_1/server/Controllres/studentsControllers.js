@@ -18,7 +18,7 @@ const studentInsert = async (req, res) => {
     }
 
     try {
-        let { name, email, phone } = req.body;
+        let { name, email, phone, stream, class: className, subject } = req.body;
         email = email.toLowerCase();
         // step 1 cheak user active, suspent or pending
         let existingStudent = await studentModel.findOne({
@@ -28,7 +28,7 @@ const studentInsert = async (req, res) => {
 
         if (existingStudent) {  //if student exists with active/suspend/pending status    (true)
             return res.send({
-                status: true,
+                status: false,
                 message: msg.student.insert.errors.email_exists
             })
         }
@@ -41,7 +41,11 @@ const studentInsert = async (req, res) => {
             rollno: nextRollNo,
             email,
             phone,
-            status: 'pending'
+            status: 'pending',
+            stream,
+            class: className,
+            subject
+
         })
 
         await student.save()
@@ -77,7 +81,7 @@ const studentListOne = async (req, res) => {
 }
 // 4. Student Update API
 const studentUpdate = async (req, res) => {
-    let { name, email, phone } = req.body;
+        let { name, email, phone, stream, class: className, subject } = req.body;
     let id = req.params.id;
 
 
@@ -104,7 +108,7 @@ const studentUpdate = async (req, res) => {
             })
         }
 
-        await studentModel.updateOne({ _id: id }, { name, email, phone })
+        await studentModel.updateOne({ _id: id }, { name, email, phone, stream, class: className, subject })
         res.send({ status: true, message: msg.student.update.success })
     } catch (err) {
         res.send({ status: false, err: err })
