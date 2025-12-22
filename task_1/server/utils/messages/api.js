@@ -24,6 +24,22 @@ const msg = {
             success: "Student list fetched successfully",
             error: "Error fetching student list"
         }
+    },
+    academic:{
+        stream: {
+            error:{
+                stream_empty:"Stream name is required",
+                stream_exist:"Stream already exists"
+            },
+            success:"Stream added successfully"
+            
+        },
+        class:{
+            success:"Class added successfully"
+        },
+        subjects:{
+            success:"Subject added successfully"
+        }
     }
 };
 
