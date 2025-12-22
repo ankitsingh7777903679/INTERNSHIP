@@ -1,14 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Select, Label, TextInput } from "flowbite-react";
 import { deleteStudent, getStudentOne, getStudents } from '../api/studentService';
 import SetStatus from './SetStatus';
 
-function StudentTable({ setStudent, student, setFormData, formData, refresh }) {
-    const tableRows = ["Name", "RollNo", "Email", "Phone", "Edit", "Delete", " Status"];
+function StudentTable({ setStudent, student, setFormData, formData, refresh, availableClasses, availableSubjects }) {
+    const tableRows = ["Name", "RollNo", "Email", "Phone", "stream", "Class", "Subject", "Edit", "Delete", " Status"];
     const [students, setStudents] = useState([])
-    const [filter, setFilter] = useState('pending')
+    const [filter, setFilter] = useState('showAll')
     const [searchQuery, setSearchQuery] = useState('')
-    // console.log('Filter value:', filter);
+    const [stream, setStream] = useState('ShowAll')
+    const [classes, setClasses] = useState('ShowAll')
+    const [subjects, setSubjects] = useState('ShowAll')
+
+    // console.log('class value:', availableClasses);
+
+    const unocClass = availableClasses.map(classItem => classItem.name);
+    const unocSub = availableSubjects.map(subjectItem => subjectItem.name);
+    //not same name print
+    const uniqueClassNames = [...new Set(unocClass)];
+    const uniqueSubNames = [...new Set(unocSub)];
+    // console.log('Unique sub Names:', uniqueSubNames);
+
+
+
     const loadData = async () => {
         try {
             const res = await getStudents();
@@ -19,6 +33,8 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh }) {
             console.log("Error fetching students:", err);
         }
     }
+
+
 
     useEffect(() => {
         loadData();
@@ -43,11 +59,18 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh }) {
             const res = await getStudentOne(id)
             if (res.status === true) {
                 setStudent(res.data);
+                const subjectArray = Array.isArray(res.data.subject)
+                    ? res.data.subject
+                    : (res.data.subject ? [res.data.subject] : []);
                 // Only set the fields needed for the form
                 setFormData({
                     name: res.data.name,
                     email: res.data.email,
-                    phone: String(res.data.phone)
+                    phone: String(res.data.phone),
+                    // rollno: String(res.data.rollno),
+                    stream: res.data.stream,
+                    class: res.data.class,
+                    subject: subjectArray
                 });
                 // });
             }
@@ -57,54 +80,96 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh }) {
     }
 
     const filteredStudents = students.filter((student) => {
-        
-        const matchesStatus = filter ==="showAll" || student.status === filter
-
-        const q = searchQuery.toLocaleUpperCase()
-        const matchesSearch = 
+        const matchesStatus = filter === "showAll" || student.status === filter;
+        const matchesStream = stream === "ShowAll" || student.stream === stream;
+        const matchesClass = classes === "ShowAll" || student.class === classes;
+        const matchesSubject = subjects === "ShowAll" || (Array.isArray(student.subject) ? student.subject.includes(subjects) : student.subject === subjects);
+        const q = searchQuery.toLocaleUpperCase();
+        const matchesSearch = !q || 
             (student.name.toLocaleUpperCase().includes(q)) ||
             (student.email.toLocaleUpperCase().includes(q)) ||
             (String(student.phone).toLocaleUpperCase().includes(q)) ||
-            (String(student.rollno).toLocaleUpperCase().includes(q)) ;
+            (String(student.rollno).toLocaleUpperCase().includes(q)) ||
+            (student.stream.toLocaleUpperCase().includes(q)) ||
+            (student.class.toLocaleUpperCase().includes(q)) ||
+            (Array.isArray(student.subject) && student.subject.some(sub => sub.toLocaleUpperCase().includes(q))) ||
+            (typeof student.subject === 'string' && student.subject.toLocaleUpperCase().includes(q));
 
-        return matchesStatus && matchesSearch;
-
-    }
-    );
+        return matchesStatus && matchesStream && matchesSearch && matchesClass && matchesSubject;
+    });
     // console.log('Filtered Students:', filteredStudents);
 
     return (
         <div>
             <div className='flex items-center gap-2 ps-3'>
                 <div className="max-w-md">
-                    <Label htmlFor="search" value="Search" className="mb-1 block"/>
-                    <TextInput 
+                    <Label htmlFor="search" value="Search" className="mb-1 block ms-1" >search</Label>
+                    <TextInput
                         id="search"
-                        placeholder="Search " 
+                        placeholder="Search "
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
                 {/* filter */}
-            <div className="w-25">
+                <div className="w-25">
+                    <Label htmlFor="status" value="Status" className="mb-1 block ms-1" >status</Label>
+                    <Select onChange={(e) => { setFilter(e.target.value); loadData(); console.log(filter); }} id="statusFilter" value={filter} required>
+                        <option value='pending'>Pending</option>
+                        <option value='showAll'>Show All</option>
+                        <option value='active'>Active</option>
+                        <option value='suspend'>Suspend</option>
+                        <option value='delete'>Delete</option>
 
-                <Select onChange={(e) => { setFilter(e.target.value); loadData(); console.log(filter); }} id="statusFilter" value={filter} required>
-                    <option value='pending'>Pending</option>
-                    <option value='showAll'>Show All</option>
-                    <option value='active'>Active</option>
-                    <option value='suspend'>Suspend</option>
-                    <option value='delete'>Delete</option>
-                </Select>
-            </div>
+                    </Select>
+                </div>
+                <div className="w-25">
+                    <Label htmlFor="stream" value="Stream" className="mb-1 block ms-1" >stream</Label>
+                    <Select onChange={(e) => { setStream(e.target.value); loadData(); console.log(stream); }} id="streamFilter" value={stream} required>
+                        <option value='ShowAll'>Show All</option>
+                        <option value='comm'>comm</option>
+                        <option value='arts'>Arts</option>
+                        <option value='sci'>sci</option>
+
+                    </Select>
+                </div>
+                <div className="w-25">
+                    <Label htmlFor="class" value="class" className="mb-1 block ms-1" >class</Label>
+                    <Select onChange={(e) => { setClasses(e.target.value); loadData(); console.log(classes); }} id="classFilter" value={classes} required>
+                        <option value='ShowAll'>Show All</option>
+                        {
+                            uniqueClassNames.map((classItem,i) => (
+                                <option className='text-white' key={i} value={classItem}>{classItem}</option>
+                            ))
+                        }
+                        
+                       
+                    </Select>
+                </div>
+                <div className="w-25">
+                    <Label htmlFor="class" value="class" className="mb-1 block ms-1" >class</Label>
+                    <Select onChange={(e) => { setSubjects(e.target.value); loadData(); console.log(subjects); }} id="classFilter" value={subjects} required>
+                        <option value='ShowAll'>Show All</option>
+                        {
+                            uniqueSubNames.map((classItem,i) => (
+                                <option className='text-white' key={i} value={classItem}>{classItem}</option>
+                            ))
+                        }
+                        
+                       
+                    </Select>
+                </div>
+
+               
             </div>
             {/* search */}
-            
-            <div className="overflow-x-auto rounded p-3">
-                <Table hoverable>
-                    <TableHead>
+
+            <div className="w-full max-w-full overflow-x-auto rounded p-3">
+                <Table hoverable className="min-w-max">
+                    <TableHead >
                         <TableRow>
                             {tableRows.map((row, index) => (
-                                <TableHeadCell key={index} className='bg-gray-700 text-white'>{row}</TableHeadCell>
+                                <TableHeadCell key={index} className='bg-gray-700 text-white whitespace-nowrap'>{row}</TableHeadCell>
                             ))}
                             {/* <TableHeadCell className='bg-gray-700 text-white'>
                                 
@@ -124,14 +189,23 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh }) {
                                         className={`bg-white dark:border-gray-700 dark:bg-gray-800 
                         ${isDeleted ? 'bg-gray-300 opacity-60' : ''}`} // Gray out if deleted
                                     >
-                                        <TableCell className="font-medium text-white">{student.name}</TableCell>
-                                        <TableCell>{student.rollno}</TableCell>
+                                        <TableCell className="font-medium text-white whitespace-nowrap">{student.name}</TableCell>
+                                        <TableCell className="whitespace-nowrap">{student.rollno}</TableCell>
                                         {/* Strike through email if deleted */}
-                                        <TableCell className={isDeleted ? 'line-through text-red-700' : ''}>
+                                        <TableCell className={`whitespace-nowrap ${isDeleted ? 'line-through text-red-700' : ''}`}>
                                             {student.email}
                                         </TableCell>
-                                        <TableCell>{student.phone}</TableCell>
-
+                                        <TableCell className="whitespace-nowrap">{student.phone}</TableCell>
+                                        <TableCell className="whitespace-nowrap">{student.stream}</TableCell>
+                                        <TableCell className="whitespace-nowrap">{student.class}</TableCell>
+                                        <TableCell className="whitespace-nowrap max-w-xs">
+                                            <div
+                                                className="truncate"
+                                                title={Array.isArray(student.subject) ? student.subject.join(', ') : student.subject}
+                                            >
+                                                {Array.isArray(student.subject) ? student.subject.join(', ') : (student.subject || '-')}
+                                            </div>
+                                        </TableCell>
                                         {/* EDIT BUTTON */}
                                         <TableCell>
                                             <button
