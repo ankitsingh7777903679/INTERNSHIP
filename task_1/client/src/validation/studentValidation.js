@@ -14,6 +14,16 @@ const studentSchema = Joi.object({
         "string.length": "Phone must be exactly 10 digits",
         "string.pattern.base": "Phone must contain only numbers",
         "string.empty": "Phone is required"
+    }),
+    stream: Joi.string().required().label("Stream").messages({
+        "string.empty": "Stream is required"
+    }),
+    class: Joi.string().required().label("Class").messages({
+        "string.empty": "Class is required"
+    }),
+    subject: Joi.array().min(1).required().label("Subject").messages({
+        "array.min": "At least one subject is required",
+        "any.required": "Subject is required"
     })
 });
 
