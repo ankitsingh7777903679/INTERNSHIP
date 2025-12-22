@@ -1,25 +1,90 @@
-import React, { useState } from 'react'
-import { Button, Label, TextInput } from "flowbite-react";
+import React, { useEffect, useState } from 'react'
+import { Button, Label, TextInput, Select } from "flowbite-react";
 import { addStudent, updateStudent } from './api/studentService';
 import StudentTable from './components/StudentTable';
 import { validateStudentForm } from './validation/studentValidation';
-import { getStreams } from './api/acadmicService';
+import { getClasses, getStreams, getSubjects } from './api/acadmicService';
 
 
 function Student() {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '' })
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', stream: '', class: '', subject: [] })
   const [errors, setError] = useState({})
   const [student, setStudent] = useState({})
   const [refresh, setRefresh] = useState(false);
+  const [availableStreams, setAvailableStreams] = useState([]);
+  const [availableClasses, setAvailableClasses] = useState([]);
+  const [availableSubjects, setAvailableSubjects] = useState([]);
 
+  const getAllStreams = async () => {
+    try {
+      const res = await getStreams();
+      // console.log("Streams fetched:", res);
+      setAvailableStreams(res.data);
+    } catch (err) {
+      console.error("Error fetching streams:", err);
+    }
+  }
+  // console.log("Available Streams:", availableStreams);
+  const getAllClasses = async () => {
+    try {
+      const res = await getClasses();
+      // console.log("Classes fetched:", res);
+      setAvailableClasses(res.data);
+    } catch (err) {
+      console.error("Error fetching classes:", err);
+    }
+  }
+  const getAllSubjects = async () => {
+    try {
+      const res = await getSubjects();
+      // console.log("Subjects fetched:", res);
+      setAvailableSubjects(res.data);
+    } catch (er) {
+      console.error("Error fetching subjects:", er);
+    }
+  }
   const getValue = (e) => {
-    let inputValue = e.target.value;
-    let inputName = e.target.name;
-    setFormData({ ...formData, [inputName]: inputValue })
+    const inputValue = e.target.value;
+    const inputName = e.target.name;
 
-    // Clear error when typing
+    setFormData((prev) => {
+      // When stream changes, reset dependent fields so old subjects don't remain
+      if (inputName === 'stream') {
+        return { ...prev, stream: inputValue, class: '', subject: [] };
+      }
+
+      // When class changes, reset subjects
+      if (inputName === 'class') {
+        return { ...prev, class: inputValue, subject: [] };
+      }
+
+      return { ...prev, [inputName]: inputValue };
+    })
+
+    // Clear errors (and dependent errors when stream changes)
+    if (inputName === 'stream') {
+      setError((prev) => ({ ...prev, stream: '', class: '', subject: '' }))
+      return;
+    }
+    if (inputName === 'class') {
+      setError((prev) => ({ ...prev, class: '', subject: '' }))
+      return;
+    }
     if (errors[inputName]) {
-      setError({ ...errors, [inputName]: '' })
+      setError((prev) => ({ ...prev, [inputName]: '' }))
+    }
+  }
+
+  const handleSubjectChange = (e) => {
+    const { value, checked } = e.target;
+    setFormData((prev) => {
+      if (!Array.isArray(prev.subject)) return { ...prev, subject: checked ? [value] : [] };
+      if (checked) return { ...prev, subject: [...prev.subject, value] };
+      return { ...prev, subject: prev.subject.filter((sub) => sub !== value) };
+    })
+    // Clear error when selecting
+    if (errors.subject) {
+      setError((prev) => ({ ...prev, subject: '' }))
     }
   }
 
@@ -56,7 +121,7 @@ function Student() {
       console.log('Update result:', result.message);
       if (result.status === true) {
         alert(result.message);
-        setFormData({ name: '', email: '', phone: '' })
+        setFormData({ name: '', email: '', phone: '', stream: '', class: '', subject: [] })
         setStudent({})
         setRefresh(!refresh)
       }
@@ -64,42 +129,31 @@ function Student() {
         alert(result.message)
       }
     }
+
     else {
       result = await addStudent(formData)
-
       if (result.status === true) {
         alert(result.message);
 
-        setFormData({ name: '', email: '', phone: '' })
+        setFormData({ name: '', email: '', phone: '', stream: '', class: '', subject: [] })
         setRefresh(!refresh)
       }
       else {
-        alert(result.message)
+       return alert(result.message)
       }
     }
-
-
-    // }
   }
-  
-  const getvalsum = async () => {
-    console.log("call stream")
-    let data =await getStreams()
-    console.log(data);
-  }
+
+  useEffect(() => {
+    getAllStreams();
+    getAllClasses();
+    getAllSubjects();
+  }, [])
+
   return (
 
-
-
-
-    <div className='bg-gray-500 p-4 rounded grid grid-cols-[30%_auto]'>
-
-
-
-
+  <div className='bg-gray-500 p-4 rounded w-full max-w-full overflow-x-hidden grid grid-cols-1 lg:grid-cols-[20%_minmax(0,1fr)] gap-4'>
       <div>
-        <button onClick={getvalsum}>click me</button>
-
         <h2 className='text-3xl font-bold text-center mb-3 text-white'>Student</h2>
         <form className="flex max-w-md flex-col gap-4" onSubmit={formSubmit}>
           <div>
@@ -122,17 +176,67 @@ function Student() {
             <TextInput id="phone" name='phone' value={formData.phone} onChange={getValue} type="number" placeholder="Phone" required />
             {errors.phone && <p className='text-red-300 text-sm mt-1'>{errors.phone}</p>}
           </div>
+          {/* stream */}
+          <div>
+            <div className="mb-2 block"><Label htmlFor="stream" value="Stream" className='text-white' /></div>
+            <Label htmlFor="stream"> Stream</Label>
+            <Select
+              value={formData.stream} onChange={getValue} name='stream' id="stream" required
+            >
+              <option value="">-- Select --</option>
+              {availableStreams.map(stream => (
+                <option key={stream._id} value={stream.name}>{stream.name}</option>
+              ))}
+            </Select>
+            {errors.stream && <p className='text-red-300 text-sm mt-1'>{errors.stream}</p>}
+          </div>
+          {/* class */}
+          <div>
+            <div className="mb-2 block"><Label htmlFor="class" value="Class" className='text-white' /></div>
+            <Label htmlFor="class"> Class</Label>
+            <Select
+              value={formData.class} onChange={getValue} name='class' id="class" required
+            >
+              <option value="">-- Select --</option>
+              {
+                availableClasses.filter(classItem => classItem.stream === formData.stream).map(classItem => (
+                  <option key={classItem._id} value={classItem.name}>{classItem.name}</option>
+                ))
+              }
+              
+            </Select>
+            {errors.class && <p className='text-red-300 text-sm mt-1'>{errors.class}</p>}
+          </div>
+          {/* subject */}
+          <div>
+            <div className="mb-2 block"><Label value="Subjects (Select multiple)" className='text-white' /></div>
+            <div className="flex flex-col gap-2 p-3 bg-[#374151] rounded-lg">
+              {
+                availableSubjects.filter(subject => subject.stream === formData.stream).map(subject => (
+                  <label key={subject._id} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      value={subject.name}
+                      checked={formData.subject.includes(subject.name)}
+                      onChange={handleSubjectChange}
+                      className="w-4 h-4 cursor-pointer"
+                    />
+                    <span className="text-white ">{subject.name}</span>
+                  </label>
+                ))
+              }
+            </div>
+            {errors.subject && <p className='text-red-300 text-sm mt-1'>{errors.subject}</p>}
+          </div>
 
           <Button type="submit" className="bg-blue-600 w-full">
             {student._id ? 'Update' : 'Submit'}
           </Button>
         </form>
       </div>
-
-      <div>
+      <div className='min-w-0'>
         <h2 className='text-3xl font-bold text-center mb-3 text-white'>Student List</h2>
-
-        <StudentTable setStudent={setStudent} student={student} setFormData={setFormData} formData={formData} refresh={refresh} />
+        <StudentTable setStudent={setStudent} student={student} setFormData={setFormData} formData={formData} refresh={refresh} availableClasses={availableClasses} availableSubjects={availableSubjects} />
       </div>
 
     </div>
