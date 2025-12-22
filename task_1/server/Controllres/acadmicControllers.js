@@ -1,21 +1,22 @@
 const classModel = require("../Model/class.model");
 const streamModel = require("../Model/stream.model");
 const subjectModel = require("../Model/subjects.model");
+const { msg } = require("../utils/messages/api");
 
 const addStreams = async(req, res) => {
     try {
         let {name} = req.body;
         if(!name){
-            return res.send({status:false, err: "Stream name is required"})
+            return res.send({status:false, err: msg.academic.stream.error.stream_empty})
         }
 
         const newStream = new streamModel({name});
         await newStream.save();
-        res.send({status:true, message: "Stream added successfully", data: newStream})
+        res.send({status:true, message: msg.academic.stream.success, data: newStream})
 
     } catch (err) {
         if(err.code === 11000){
-            return res.send({status:false, message: "Stream already exists"})
+            return res.send({status:false, message: msg.academic.stream.error.stream_exist})
         }
         return res.send({status:false, message: err.message})
     }
@@ -38,7 +39,7 @@ const addClass = async (req, res) => {
         let { name, stream } = req.body;    
         const newClass = new classModel({ name, stream });
         await newClass.save();
-        res.send({ status: true, message: "Class added successfully", data: newClass });
+        res.send({ status: true, message:msg.academic.class.success, data: newClass });
     } catch (err) {
         res.send({status:false, message: err.message})
     }
@@ -60,7 +61,7 @@ const addSubject = async (req, res) => {
         let { name, stream } = req.body;
         const newSubject = new subjectModel({ name, stream });
         await newSubject.save();
-        res.send({ status: true, message: "Subject added successfully", data: newSubject });
+        res.send({ status: true, message: msg.academic.subjects.success, data: newSubject });
     } catch (err) {
         res.send({status:false, message: err.message})
     }
