@@ -18,6 +18,18 @@ let studentScheema = new Schema({
         type:Number,
         required:true,
     },
+    stream:{
+        type:String,
+        required:true,
+    },
+    class:{
+        type:String,
+        required:true,
+    },
+    subject:{
+        type:[String],
+        required:true,
+    },
     status:{
         type:String,
         enum:['pending','active', 'suspended', 'delete'],
