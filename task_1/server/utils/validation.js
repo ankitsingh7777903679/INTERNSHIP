@@ -21,7 +21,20 @@ const validateStudent = (data) => {
                 'string.length': 'Phone number must be exactly 10 digits',
                 'string.pattern.base': 'Phone number must contain only numbers',
                 'any.required': 'Phone number is required'
-            })
+            }
+        ),
+        stream: Joi.string().required().messages({
+            'string.empty': 'Stream cannot be empty',
+            'any.required': 'Stream is a required field'
+        }),
+        class: Joi.string().required().messages({
+            'string.empty': 'Class cannot be empty',
+            'any.required': 'Class is a required field'
+        }),
+        subject: Joi.array().min(1).required().messages({
+            'array.min': 'At least one subject is required',
+            'any.required': 'Subject is a required field'
+        }),
     })
     return Schema.validate(data);
 }
