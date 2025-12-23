@@ -62,11 +62,97 @@ const studentInsert = async (req, res) => {
 }
 // 2. Student List API
 const studentList = async (req, res) => {
+    // try {
+    //     // A. Get Query Params (Default: Page 1, Limit 5)
+    //     const page = parseInt(req.query.page) || 1;
+    //     const limit = parseInt(req.query.limit) || 5;
+
+    //     // B. Get Filter Params
+    //     const statusFilter = req.query.status && req.query.status !== 'showAll' ? req.query.status : null;
+
+    //     // C. Apply Status & Stream Filters
+    //     if (statusFilter) query.status = statusFilter;
+
+    //     // let data = await studentModel.find().sort({ createdAt: -1 });
+    //     // res.send({ status: true, data: data })
+    // } catch (err) {
+    //     res.send({ status: false, err: err.message })
+    // }
+
+
     try {
-        let data = await studentModel.find().sort({ createdAt: -1 });
-        res.send({ status: true, data: data })
+        // A. Get Query Params (Default: Page 1, Limit 5)
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const search = req.query.search || "";
+        // console.log("Search Query:", search);
+
+        // B. Get Filter Params
+        const statusFilter = req.query.status && req.query.status !== 'showAll' ? req.query.status : null;
+        const streamFilter = req.query.stream && req.query.stream !== 'ShowAll' ? req.query.stream : null;
+        const classFilter = req.query.class && req.query.class !== 'ShowAll' ? req.query.class : null;
+        const subjectFilter = req.query.subject && req.query.subject !== 'ShowAll' ? req.query.subject : null;
+
+        let query = {};
+
+        // C. Apply Status & Stream Filters
+        if (statusFilter) query.status = statusFilter;
+        if (streamFilter) query.stream = streamFilter;
+
+        // D. Apply Class/Subject filters directly because the schema stores plain strings
+        if (classFilter) query.class = classFilter;
+        if (subjectFilter) query.subject = subjectFilter;
+
+        // F. Global Search Logic
+        if (search) {
+            const regex = new RegExp(search, 'i'); // Case insensitive
+            const orConditions = [
+                { name: regex },
+                { email: regex },
+                { stream: regex },
+                { class: regex },
+                { subject: regex }
+            ];
+
+            // Add numeric matches for phone/rollno when the search is a number
+            const numericSearch = Number(search);
+            if (!Number.isNaN(numericSearch)) {
+                orConditions.push({ phone: numericSearch });
+                orConditions.push({ rollno: numericSearch });
+            }
+
+            query.$or = orConditions;
+
+            // Combine with existing filters when present
+            if (statusFilter || streamFilter || classFilter || subjectFilter) {
+                query = { $and: [{ ...query }, { $or: query.$or }] };
+                delete query.$or;
+            }
+        }
+
+        // G. Fetch Data
+        const totalDocs = await studentModel.countDocuments(query);
+
+        const data = await studentModel.find(query)
+            .populate('class', 'name')   // Show Class Name
+            .populate('subject', 'name') // Show Subject Names
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        res.send({
+            status: true,
+            data: data,
+            pagination: {
+                totalDocs,
+                totalPages: Math.ceil(totalDocs / limit),
+                currentPage: page,
+                limit
+            }
+        })
+
     } catch (err) {
-        res.send({ status: false, err: err })
+        res.send({ status: false, err: err.message })
     }
 }
 // 3. Student List One API
@@ -81,7 +167,7 @@ const studentListOne = async (req, res) => {
 }
 // 4. Student Update API
 const studentUpdate = async (req, res) => {
-        let { name, email, phone, stream, class: className, subject } = req.body;
+    let { name, email, phone, stream, class: className, subject } = req.body;
     let id = req.params.id;
 
 
