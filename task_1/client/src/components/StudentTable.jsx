@@ -1,11 +1,17 @@
 import React, { use, useEffect, useState } from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Select, Label, TextInput } from "flowbite-react";
+import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Select, Label, TextInput, Pagination } from "flowbite-react";
 import { deleteStudent, getStudentOne, getStudents } from '../api/studentService';
 import SetStatus from './SetStatus';
 
 function StudentTable({ setStudent, student, setFormData, formData, refresh, availableClasses, availableSubjects }) {
     const tableRows = ["Name", "RollNo", "Email", "Phone", "stream", "Class", "Subject", "Edit", "Delete", " Status"];
     const [students, setStudents] = useState([])
+
+    // pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(5);
+
+    // filter states
     const [filter, setFilter] = useState('showAll')
     const [searchQuery, setSearchQuery] = useState('')
     const [stream, setStream] = useState('ShowAll')
@@ -24,10 +30,31 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh, ava
 
 
     const loadData = async () => {
+        // try {
+        //     const res = await getStudents();
+        //     if (res.status === true) {
+        //         setStudents(res.data)
+        //     }
+        // } catch (err) {
+        //     console.log("Error fetching students:", err);
+        // }
+
         try {
-            const res = await getStudents();
+            const res = await getStudents({
+                page: currentPage,
+                limit: 5,
+                search: searchQuery,
+                status: filter,
+                stream: stream,
+                class: classes,
+                subject: subjects
+            });
+
             if (res.status === true) {
-                setStudents(res.data)
+                setStudents(res.data);
+                if (res.pagination) {
+                    setTotalPages(res.pagination.totalPages);
+                }
             }
         } catch (err) {
             console.log("Error fetching students:", err);
@@ -35,10 +62,16 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh, ava
     }
 
 
-
+    // Effect 1: Reload when Page or Refresh changes
     useEffect(() => {
         loadData();
-    }, [refresh])
+    }, [refresh, currentPage])
+
+    // Effect 2: Reset to Page 1 when Filters/Search change
+    useEffect(() => {
+        setCurrentPage(1);
+        loadData();
+    }, [filter, stream, classes, subjects, searchQuery]);
 
     const studentDelete = async (id) => {
         try {
@@ -79,24 +112,24 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh, ava
         }
     }
 
-    const filteredStudents = students.filter((student) => {
-        const matchesStatus = filter === "showAll" || student.status === filter;
-        const matchesStream = stream === "ShowAll" || student.stream === stream;
-        const matchesClass = classes === "ShowAll" || student.class === classes;
-        const matchesSubject = subjects === "ShowAll" || (Array.isArray(student.subject) ? student.subject.includes(subjects) : student.subject === subjects);
-        const q = searchQuery.toLocaleUpperCase();
-        const matchesSearch = !q || 
-            (student.name.toLocaleUpperCase().includes(q)) ||
-            (student.email.toLocaleUpperCase().includes(q)) ||
-            (String(student.phone).toLocaleUpperCase().includes(q)) ||
-            (String(student.rollno).toLocaleUpperCase().includes(q)) ||
-            (student.stream.toLocaleUpperCase().includes(q)) ||
-            (student.class.toLocaleUpperCase().includes(q)) ||
-            (Array.isArray(student.subject) && student.subject.some(sub => sub.toLocaleUpperCase().includes(q))) ||
-            (typeof student.subject === 'string' && student.subject.toLocaleUpperCase().includes(q));
+    // const filteredStudents = students.filter((student) => {
+    //     const matchesStatus = filter === "showAll" || student.status === filter;
+    //     const matchesStream = stream === "ShowAll" || student.stream === stream;
+    //     const matchesClass = classes === "ShowAll" || student.class === classes;
+    //     const matchesSubject = subjects === "ShowAll" || (Array.isArray(student.subject) ? student.subject.includes(subjects) : student.subject === subjects);
+    //     const q = searchQuery.toLocaleUpperCase();
+    //     const matchesSearch = !q || 
+    //         (student.name.toLocaleUpperCase().includes(q)) ||
+    //         (student.email.toLocaleUpperCase().includes(q)) ||
+    //         (String(student.phone).toLocaleUpperCase().includes(q)) ||
+    //         (String(student.rollno).toLocaleUpperCase().includes(q)) ||
+    //         (student.stream.toLocaleUpperCase().includes(q)) ||
+    //         (student.class.toLocaleUpperCase().includes(q)) ||
+    //         (Array.isArray(student.subject) && student.subject.some(sub => sub.toLocaleUpperCase().includes(q))) ||
+    //         (typeof student.subject === 'string' && student.subject.toLocaleUpperCase().includes(q));
 
-        return matchesStatus && matchesStream && matchesSearch && matchesClass && matchesSubject;
-    });
+    //     return matchesStatus && matchesStream && matchesSearch && matchesClass && matchesSubject;
+    // });
     // console.log('Filtered Students:', filteredStudents);
 
     return (
@@ -115,8 +148,8 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh, ava
                 <div className="w-25">
                     <Label htmlFor="status" value="Status" className="mb-1 block ms-1" >status</Label>
                     <Select onChange={(e) => { setFilter(e.target.value); loadData(); console.log(filter); }} id="statusFilter" value={filter} required>
-                        <option value='pending'>Pending</option>
                         <option value='showAll'>Show All</option>
+                        <option value='pending'>Pending</option>
                         <option value='active'>Active</option>
                         <option value='suspend'>Suspend</option>
                         <option value='delete'>Delete</option>
@@ -138,29 +171,29 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh, ava
                     <Select onChange={(e) => { setClasses(e.target.value); loadData(); console.log(classes); }} id="classFilter" value={classes} required>
                         <option value='ShowAll'>Show All</option>
                         {
-                            uniqueClassNames.map((classItem,i) => (
+                            uniqueClassNames.map((classItem, i) => (
                                 <option className='text-white' key={i} value={classItem}>{classItem}</option>
                             ))
                         }
-                        
-                       
+
+
                     </Select>
                 </div>
                 <div className="w-25">
-                    <Label htmlFor="class" value="class" className="mb-1 block ms-1" >class</Label>
+                    <Label htmlFor="class" value="class" className="mb-1 block ms-1" >subjects</Label>
                     <Select onChange={(e) => { setSubjects(e.target.value); loadData(); console.log(subjects); }} id="classFilter" value={subjects} required>
                         <option value='ShowAll'>Show All</option>
                         {
-                            uniqueSubNames.map((classItem,i) => (
+                            uniqueSubNames.map((classItem, i) => (
                                 <option className='text-white' key={i} value={classItem}>{classItem}</option>
                             ))
                         }
-                        
-                       
+
+
                     </Select>
                 </div>
 
-               
+
             </div>
             {/* search */}
 
@@ -178,7 +211,7 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh, ava
                     </TableHead>
                     <TableBody className="divide-y">
                         {
-                            filteredStudents.map((student, index) => {
+                            students.map((student, index) => {
                                 // console.log('Student Status:', student._id);
                                 // LOGIC: If status is 'delete'
                                 const isDeleted = student.status === 'delete';
@@ -241,6 +274,18 @@ function StudentTable({ setStudent, student, setFormData, formData, refresh, ava
                         }
                     </TableBody>
                 </Table>
+
+                {/* --- PAGINATION --- */}
+                <div className="flex justify-center mt-4">
+                    {totalPages > 1 && (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={(page) => setCurrentPage(page)}
+                            showIcons
+                        />
+                    )}
+                </div>
             </div>
         </div>
     )
