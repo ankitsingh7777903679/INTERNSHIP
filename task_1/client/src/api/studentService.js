@@ -3,8 +3,11 @@ import axios from 'axios';
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 // 1. List data from server
-export const getStudents = async () => {
-    const res = await axios.get(`${SERVER_URL}/list`)
+export const getStudents = async (params) => {
+    // console.log("input.......",params);
+    const query = params ? new URLSearchParams(params).toString() : ''
+    const res = await axios.get(`${SERVER_URL}/list?${query}`)
+    console.log("response.......",res);
     // console.log(res.data.data);
     return res.data;
 }
