@@ -1,9 +1,9 @@
-import React, { use, useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Select, Label, TextInput, Pagination } from "flowbite-react";
 import { deleteStudent, getStudentOne, getStudents } from '../api/studentService';
 import SetStatus from './SetStatus';
 
-function StudentTable({ setStudent, student, setFormData, formData, refresh, availableClasses, availableSubjects }) {
+function StudentTable({ setStudent, setFormData, refresh, availableClasses, availableSubjects }) {
     const tableRows = ["Name", "RollNo", "Email", "Phone", "stream", "Class", "Subject", "Edit", "Delete", " Status"];
     const [students, setStudents] = useState([])
 

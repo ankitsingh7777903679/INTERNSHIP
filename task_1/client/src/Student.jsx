@@ -88,19 +88,19 @@ function Student() {
     }
   }
 
-  const validateForm = (values) => {
-    let error = {}
-    if (!values.name) error.name = "Name is required";
-    if (!values.email) {
-      error.email = "Email is required";
-    } else if (!/\S+@\S+\.com$/.test(values.email)) {
-      error.email = "Email is invalid";
-    }
-    // if (!values.rollno) error.rollno = "Roll Number is required";
-    if (String(values.phone).length !== 10) error.phone = "Phone must be 10 digits";
+  // const validateForm = (values) => {
+  //   let error = {}
+  //   if (!values.name) error.name = "Name is required";
+  //   if (!values.email) {
+  //     error.email = "Email is required";
+  //   } else if (!/\S+@\S+\.com$/.test(values.email)) {
+  //     error.email = "Email is invalid";
+  //   }
+  //   // if (!values.rollno) error.rollno = "Roll Number is required";
+  //   if (String(values.phone).length !== 10) error.phone = "Phone must be 10 digits";
 
-    return error;
-  }
+  //   return error;
+  // }
 
   const formSubmit = async (e) => {
     e.preventDefault();
