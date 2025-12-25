@@ -2,21 +2,21 @@ import React from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from "flowbite-react";
 import { findDimond } from '../api/dimondServer';
 import { useEffect } from 'react';
-function DimondTable() {
+function DimondTable({dimondValue}) {
     const dimondTableRow = ["Shape", "Color", "Clarity", "From", "To", "Price"];
     const [dimondData, setDimondData] = React.useState([]);
 
     let fetchDimondData = async () => {
         // Fetch data from server (replace with actual API call)
         const response = await findDimond();
-        console.log("Fetched dimond data:", response);
+        // console.log("Fetched dimond data:", response);
         setDimondData(response.data || []);                                                                                    
         // console.log("Fetch dimond data function called");
     }
 
     useEffect(() => {
         fetchDimondData();
-    }, []);
+    }, [dimondValue]);
   return (
     <div>
       <div className="overflow-x-auto rounded-xl">
