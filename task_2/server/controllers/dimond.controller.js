@@ -1,8 +1,9 @@
 const express = require('express');
 const dimondModel = require('../models/dimond.model');
 const { msg } = require('../utils/messages/api');
-const { validationDimond } = require('../utils/validation');
+const { validationDimond } = require('../utils/validation/validation');
 const { HTTP_RESPONSES } = require('../utils/constants');
+const { validationDimondPrice } = require('../utils/validation/dimondPrice');
 
 const test = (req, res) => {
     res.send("Hello from dimond controller")
@@ -49,6 +50,13 @@ const insertDimond = async (req, res) => {
 }
 
 const findDimondPrice = async (req, res) => {
+    const { error } = validationDimondPrice(req.body);
+    if (error) {
+        return res.status(HTTP_RESPONSES.BAD_REQUEST).send({
+            status: false,
+            message: error.details[0].message //error
+        });
+    }
     try {
         let { shape, color, clarity, size, weight } = req.body;
 
