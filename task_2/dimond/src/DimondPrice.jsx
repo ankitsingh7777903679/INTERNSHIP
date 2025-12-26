@@ -89,7 +89,7 @@ function DimondPrice() {
             <div className="mb-2 block">
               <Label htmlFor="size">Size</Label>
             </div>
-            <TextInput id="size" type="number" value={dimondValue.size} onChange={(e) => setFormDimondPrice(e)} placeholder="Enter 0.19.."  />
+            <TextInput id="size" type="number" min={0} value={dimondValue.size} onChange={(e) => setFormDimondPrice(e)} placeholder="Enter 0.19.."  />
             {error.size && <p className='text-red-300 text-sm mt-1'>{error.size}</p>}
           </div>
           <div>
@@ -98,7 +98,7 @@ function DimondPrice() {
             <div className="mb-2 block">
               <Label htmlFor="weight">Weight</Label>
             </div>
-            <TextInput id="weight" type="number" value={dimondValue.weight} onChange={(e) => setFormDimondPrice(e)} placeholder="enter 0.29.."  />
+            <TextInput id="weight" type="number" min={0} value={dimondValue.weight} onChange={(e) => setFormDimondPrice(e)} placeholder="enter 0.29.."  />
             {error.weight && <p className='text-red-300 text-sm mt-1'>{error.weight}</p>}
           </div>
         </div>

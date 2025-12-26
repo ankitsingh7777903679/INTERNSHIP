@@ -111,20 +111,20 @@ function Dimond() {
                             <div className="mb-2 block">
                                 <Label htmlFor="from">From</Label>
                             </div>
-                            <TextInput id="from" type="number" value={dimondValue.from} onChange={(e) => setFormDimondValue(e)} placeholder="Enter 0.19.."  />
+                            <TextInput id="from" type="number" min={0} value={dimondValue.from} onChange={(e) => setFormDimondValue(e)} placeholder="Enter 0.19.."  />
                             {error.from && <p className='text-red-300 text-sm mt-1'>{error.from}</p>}
                         </div>
                         <div>
                             <div className="mb-2 block">
                                 <Label htmlFor="to">To</Label>
                             </div>
-                            <TextInput id="to" type="number" value={dimondValue.to} onChange={(e) => setFormDimondValue(e)} placeholder="enter 0.29.."  />
+                            <TextInput id="to" type="number" min={0} value={dimondValue.to} onChange={(e) => setFormDimondValue(e)} placeholder="enter 0.29.."  />
                             {error.to && <p className='text-red-300 text-sm mt-1'>{error.to}</p>}
                         </div>
                         <div className="mb-2 block">
                             <Label htmlFor="price">Price</Label>
                         </div>
-                        <TextInput id="price" type="number" value={dimondValue.price} onChange={(e) => setFormDimondValue(e)} placeholder="Enter price"  />
+                        <TextInput id="price" type="number" min={0} value={dimondValue.price} onChange={(e) => setFormDimondValue(e)} placeholder="Enter price"  />
                             {error.price && <p className='text-red-300 text-sm mt-1'>{error.price}</p>}
                         </div>
                 
