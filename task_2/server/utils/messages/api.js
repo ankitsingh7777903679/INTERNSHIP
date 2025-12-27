@@ -7,7 +7,17 @@ const msg = {
             },
             success : "Dimond inserted successfully"
         },
+        update : {
+            success : "Dimond updated successfully"
+        }
         
+    },
+    addDiamond: {
+        success: "Dimond added successfully",
+        errors: {
+            invalid_param: "Invalid parameters provided for adding dimond",
+            skockId_exists: "Dimond with this stockId already exists",
+        }
     }
 };
 

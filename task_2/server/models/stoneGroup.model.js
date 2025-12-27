@@ -2,48 +2,39 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const dimondSchema = new Schema({
-    stockId:{
-        type:String,
-        required:true,
-        unique:true
-    },
     shape:{
         type:String,
         required:true,
+        // unique:true,
         enum:['round','pear','heart']
     },
     color:{
         type:String,
         required:true,
+        // unique:true,
         enum:['G','H','I','J'],
     },
     clarity:{
         type:String,
         required:true,
+        // unique:true,
         enum:['VVS1','VVS2','VS1','SI1']
     },
-    weight:{
+    from:{
         type:Number,
         required:true,
+        // unique:true,
     },
-    rap:{
+    to:{
         type:Number,
         required:true,
+        // unique:true,
     },
-    discount:{
-        type:Number,
-        required:true,
-    },
-    pricePerCarat:{
-        type:Number,
-        required:true,
-    },
-    amount:{
+    price:{
         type:Number,
         required:true,
     }
-
 })
 
-const dimondModel = mongoose.model('dimondDetails', dimondSchema)
-module.exports = dimondModel
+const stoneGroupModel = mongoose.model('dimond', dimondSchema)
+module.exports = stoneGroupModel
