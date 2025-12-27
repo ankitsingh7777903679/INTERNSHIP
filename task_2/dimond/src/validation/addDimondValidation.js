@@ -1,7 +1,10 @@
 import Joi from "joi"
 
 // 1. Schema Define Karein (Rules)
-const dimondSchema = Joi.object({
+const addDimondSchema = Joi.object({
+    stockId: Joi.string().required().label("Stock ID").messages({
+        "string.empty": "Stock ID is required"
+    }),
     shape: Joi.string().valid("round", "pear", "heart").required().label("Shape").messages({
         "any.only": "Shape must be one of round, pear, or heart",
         "string.empty": "Shape is required"
@@ -18,6 +21,23 @@ const dimondSchema = Joi.object({
         "number.min": "Weight must be at least 0",
         "number.base": "Weight must be a number",
         "any.required": "Weight is required"
+    }),
+    rap: Joi.number().min(0).required().label("Rap").messages({
+        "number.min": "Rap must be at least 0",
+        "number.base": "Rap must be a number",
+        "any.required": "Rap is required"
+    }),
+    discount: Joi.number().required().label("Discount").messages({
+        "number.base": "Discount must be a number",
+        "any.required": "discount is required"
+    }),
+    pricePerCarat: Joi.number().required().label("Price Per Carat").messages({
+        "number.base": "Price Per Carat must be a number",
+        "any.required": "Price Per Carat is required"
+    }),
+    amount: Joi.number().required().label("Amount").messages({
+        "number.base": "Amount must be a number",
+        "any.required": "Amount is required",
     })
     
 })
@@ -26,8 +46,8 @@ const dimondSchema = Joi.object({
 
 
 
-export const validationDimondPriceForm = (DimondFormData) => {
-    const result = dimondSchema.validate(DimondFormData, { abortEarly: false }); // abortEarly: false = Show all errors
+export const validationAddDimondForm = (DimondFormData) => {
+    const result = addDimondSchema.validate(DimondFormData, { abortEarly: false }); // abortEarly: false = Show all errors
 
     if (!result.error) return null; // error null
     const newErrors = {};
@@ -38,8 +58,8 @@ export const validationDimondPriceForm = (DimondFormData) => {
 }
 
 // Validate only a specific field
-export const validationDimondPriceField = (fieldName, fieldValue = {}) => {
-    const fieldSchema = dimondSchema.extract(fieldName);
+export const validationAddDimondField = (fieldName, fieldValue = {}) => {
+    const fieldSchema = addDimondSchema.extract(fieldName);
     const result = fieldSchema.validate(fieldValue);
     
     if (!result.error) return null;
