@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 function Header() {
   return (
     <>
-      <Navbar fluid rounded >
+    <div className="fixed w-full z-10 top-0">
+      <Navbar fluid rounded  >
         <NavbarBrand>
           <Link to="/" className="flex items-center">
             <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Dimond</span>
@@ -20,6 +21,8 @@ function Header() {
           </NavbarLink>
         </NavbarCollapse>
       </Navbar>
+    </div>
+      
     </>
   )
 }
