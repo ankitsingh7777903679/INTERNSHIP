@@ -1,3 +1,5 @@
+const { findDimondPrice } = require("../../controllers/dimond.controller");
+
 const msg = {
     dimond : {
         insert : {
@@ -18,6 +20,13 @@ const msg = {
             invalid_param: "Invalid parameters provided for adding dimond",
             skockId_exists: "Dimond with this stockId already exists",
         }
+    },
+    findDimondPrice:{
+        errors: {
+            invalid_param: "Invalid parameters provided for finding dimond price",
+        },
+        notExists: "No dimond exist",
+        success: "Dimond price found successfully"
     }
 };
 
