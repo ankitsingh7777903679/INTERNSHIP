@@ -47,7 +47,7 @@ const addDimondSchema = Joi.object({
 
 
 export const validationAddDimondForm = (DimondFormData) => {
-    const result = addDimondSchema.validate(DimondFormData, { abortEarly: false }); // abortEarly: false = Show all errors
+    const result = addDimondSchema.validate(DimondFormData, { abortEarly: true }); // abortEarly: false = Show all errors
 
     if (!result.error) return null; // error null
     const newErrors = {};
