@@ -4,6 +4,8 @@ import { useState } from "react";
 import { insertStoneGroup, updateDimond } from "./api/dimondServer";
 import StoneGroupTable from "./components/StoneGroupTable";
 import { validationDimondForm, validationDimondField } from "./validation/dimondValidation";
+import { toast } from "react-toastify";
+import { ToastContainer } from 'react-toastify';
 // import { set } from "mongoose";
 function Dimond() {
     const [error, setError] = useState({})
@@ -48,8 +50,10 @@ function Dimond() {
         console.log("Dimond Value Submitted:", dimondValue);
         const errors = validationDimondForm(dimondValue);
         if (errors) {
-            setError(errors);
-            console.log("Validation errors:", error);
+            setError(errors)
+            
+            console.log("Validation errors:", error)
+            toast.error(error.shape || error.color || error.clarity || error.from || error.to || error.price);
             // alert("Validation errors. Please check the form fields.");
             return;
         }
@@ -59,7 +63,8 @@ function Dimond() {
             let res = await updateDimond(id, dimondValue);
             console.log("Response from server:", res);
             if (res.status === true) {
-                alert(res.message);
+                toast.success(res.message);
+                // alert(res.message);
                 setDimondValue({
                     shape: "",
                     color: "",
@@ -72,7 +77,8 @@ function Dimond() {
                 setDimondId(null);
             }
             else {
-                alert(res.message || "Failed to insert dimond data.");
+                toast.error(res.message || "Failed to insert dimond data.");
+                // alert(res.message || "Failed to insert dimond data.");
             }
 
         }
@@ -80,7 +86,8 @@ function Dimond() {
             let res = await insertStoneGroup(dimondValue);
             console.log("Response from server:", res);
             if (res.status === true) {
-                alert(res.message);
+                toast.success(res.message);
+                // alert(res.message);
                 setDimondValue({
                     shape: "",
                     color: "",
@@ -92,7 +99,8 @@ function Dimond() {
                 });
             }
             else {
-                alert(res.message || "Failed to insert Stone Group data.");
+                toast.error(res.message || "Failed to insert Stone Group data.")
+                // alert(res.message || "Failed to insert Stone Group data.");
             }
         }
 
@@ -105,6 +113,7 @@ function Dimond() {
             <div className="p-4 grid grid-cols-[30%_auto] gap-7">
                 <div className="">
                     <h1 className="text-2xl font-bold mb-4">Stone Group</h1>
+                    <ToastContainer />
                     <form onSubmit={handelFormDimond} className="flex w-full flex-col gap-4 bg-gray-500 p-4 rounded-lg">
 
                         <div>

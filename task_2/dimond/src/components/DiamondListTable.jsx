@@ -19,7 +19,7 @@ function DiamondListTable({addDiamond}) {
     return (
         <div>
             <div className="overflow-x-auto rounded">
-                <Table striped>
+                <Table >
                     <TableHead>
                         <TableHeadCell>Stock Id</TableHeadCell>
                         <TableHeadCell>Shape</TableHeadCell>
@@ -34,8 +34,8 @@ function DiamondListTable({addDiamond}) {
                     <TableBody className="divide-y">
                         {diamondData.map((diamondData, index) => {
                             return (
-                                <TableRow key={index} className="dark:border-gray-700 dark:bg-gray-800 text-black bg-gray-500">
-                                    <TableCell className="whitespace-nowrap font-medium text-gray-900">{diamondData.stockId}</TableCell>
+                                <TableRow key={index} className="dark:border-gray-700 dark:bg-gray-800  bg-gray-500">
+                                    <TableCell cclassName="whitespace-nowrap font-medium text-gray-900 dark:text-white">{diamondData.stockId}</TableCell>
                                     <TableCell>{diamondData.shape}</TableCell>
                                     <TableCell>{diamondData.color}</TableCell>
                                     <TableCell>{diamondData.clarity}</TableCell>
