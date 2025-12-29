@@ -42,6 +42,7 @@ const dimondSchema = new Schema({
         type:Number,
         required:true,
     }
+    
 
 })
 
