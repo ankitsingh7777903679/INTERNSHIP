@@ -81,10 +81,8 @@ const findDimondPrice = async (req, res) => {
         res.send({ status: true, total_price: price });
 
     } catch (err) {
-        res.send({ status: false, message: msg.dimond.insert.errors.invalid_param, error: err })
+        res.send({ status: false, message: msg.findDimondPrice.notExists, error: err })
     }
-
-
 }
 
 const findDimond = async (req, res) => {
@@ -187,7 +185,7 @@ const addDiamond = async (req, res) => {
         res.send({ status: true, message: msg.addDiamond.success });
 
     } catch (err) {
-        res.send({ status: false, message: msg.addDiamond.errors.stockId_exists, error: err.message });
+        res.send({ status: false, message: msg.addDiamond.errors.skockId_exists });
     }
 } 
 
