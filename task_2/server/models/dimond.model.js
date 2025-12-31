@@ -5,7 +5,7 @@ const dimondSchema = new Schema({
     stockId:{
         type:String,
         required:true,
-        unique:true
+        // unique:true
     },
     shape:{
         type:String,
@@ -41,10 +41,21 @@ const dimondSchema = new Schema({
     amount:{
         type:Number,
         required:true,
+    },
+    status:{
+        type:String,
+        enum:['available','hold', 'sold', 'deleted'],
+        default:'available'
     }
     
-
 })
+
+dimondSchema.index(
+    {stockId:1},
+    {unique:true,
+        partialFilterExpression:{status:{$ne:'deleted'}}
+    }
+)
 
 const dimondModel = mongoose.model('dimondDetails', dimondSchema)
 module.exports = dimondModel
