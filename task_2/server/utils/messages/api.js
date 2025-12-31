@@ -27,6 +27,25 @@ const msg = {
         },
         notExists: "No dimond exist",
         success: "Dimond price found successfully"
+    },
+    changeDimondStatus: {
+        success: "Dimond status changed successfully",
+        errors: {
+            invalid_param: "Invalid parameters provided for changing dimond status",
+        }
+    },
+    deleteDimond: {
+        success: "Dimond deleted successfully",
+        errors: {
+            invalid_param: "Invalid parameters provided for deleting dimond",
+        }
+    },
+    updateDimond: {
+        success: "Dimond updated successfully",
+        errors: {
+            invalid_param: "Invalid parameters provided for updating dimond",
+            skockId_exists: "Dimond with this stockId already exists",
+        }
     }
 };
 
