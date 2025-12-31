@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { studentSetStatus } from '../api/studentService';
 
-function SetStatus({studentStatus, student, loadData, onStatusChange}) {
+function SetStatus({ studentStatus, student, loadData, onStatusChange }) {
     const [statusValue, setStatusValue] = useState(studentStatus || 'pending');
-
+    
     useEffect(() => {
         setStatusValue(studentStatus || 'pending');
     }, [studentStatus]);
@@ -28,7 +28,7 @@ function SetStatus({studentStatus, student, loadData, onStatusChange}) {
     const statusChange = async (e) => {
         let newStatus = e.target.value;
         try {
-            await studentSetStatus(student._id, { status: newStatus})
+            await studentSetStatus(student._id, { status: newStatus })
             setStatusValue(newStatus);
             loadData(); // Reload table data without full page refresh
         } catch (err) {
@@ -38,19 +38,19 @@ function SetStatus({studentStatus, student, loadData, onStatusChange}) {
     return (
         <div>
             <div className="max-w-md">
-            <select 
-                value={statusValue}
-                onChange={statusChange}
-                disabled={student.status === 'delete'}
-                className={`font-medium border rounded text-sm p-1 ${getStatusStyle(statusValue)}`}
-            >
-                {statusOptions.map((option) => (
-                    <option key={option.value} value={option.value} className="text-black bg-white">
-                        {option.label}
-                    </option>
-                ))}
-            </select>
-        </div>
+                <select
+                    value={statusValue}
+                    onChange={statusChange}
+                    disabled={student.status === 'delete'}
+                    className={`font-medium border rounded text-sm p-1 ${getStatusStyle(statusValue)}`}
+                >
+                    {statusOptions.map((option) => (
+                        <option key={option.value} value={option.value} className="text-black bg-white">
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
+            </div>
         </div>
     )
 }
