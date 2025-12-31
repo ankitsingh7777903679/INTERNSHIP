@@ -5,7 +5,6 @@ import { insertStoneGroup, updateDimond } from "./api/dimondServer";
 import StoneGroupTable from "./components/StoneGroupTable";
 import { validationDimondForm, validationDimondField } from "./validation/dimondValidation";
 import { toast } from "react-toastify";
-import { ToastContainer } from 'react-toastify';
 // import { set } from "mongoose";
 function Dimond() {
     const [error, setError] = useState({})
@@ -113,7 +112,7 @@ function Dimond() {
             <div className="p-4 grid grid-cols-[30%_auto] gap-7">
                 <div className="">
                     <h1 className="text-2xl font-bold mb-4">Stone Group</h1>
-                    <ToastContainer />
+                    {/* <ToastContainer /> */}
                     <form onSubmit={handelFormDimond} className="flex w-full flex-col gap-4 bg-gray-500 p-4 rounded-lg">
 
                         <div>
