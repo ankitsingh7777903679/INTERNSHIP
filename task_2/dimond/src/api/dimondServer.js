@@ -32,7 +32,34 @@ export const addDiamond = async (dimondData) => {
     return res.data
 }
 
-export const listDimond = async () => {
-    const res = await axios.get(`${SERVER_URL}/listDimond`)
+export const listDimond = async (params) => {
+    const query = params ? new URLSearchParams(params).toString() : ''
+    const res = await axios.get(`${SERVER_URL}/listDimond?${query}`)
+    return res.data
+}
+
+export const changeDimondStatus = async (id, statusData) => {
+    const res = await axios.put(`${SERVER_URL}/changeStatus/${id}`, statusData)
+    return res.data
+}
+
+export const deleteDiamond = async (id) => {
+    const res = await axios.put(`${SERVER_URL}/deleteDiamond/${id}`)
+    return res.data
+}
+
+export const listOneDimond = async (id) => {
+    const res = await axios.get(`${SERVER_URL}/listOneDimond/${id}`)
+    return res.data
+}
+
+export const updateoneDiamond = async (id, diamondData) => {
+    const res = await axios.put(`${SERVER_URL}/updateOneDiamond/${id}`, diamondData)
+    console.log("res", res);
+    return res.data
+}
+
+export const weightRange = async () => {
+    const res = await axios.get(`${SERVER_URL}/minWeight`)
     return res.data
 }
