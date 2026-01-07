@@ -1,4 +1,4 @@
-import Image from "next/image";
+import css from "styled-jsx/css";
 
 export default function Home() {
   return (
