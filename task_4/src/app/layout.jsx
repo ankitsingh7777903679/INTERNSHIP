@@ -12,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Contact Manager",
-  description: "A simple contact management application",
+  title: "blogPage",
+  description: "A simple blog application",
 };
 
 export default function RootLayout({ children }) {
