@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import React from 'react'
 
-export default function Post() {
+export default function Post({promise}) {
   return (
     <div>
       {
-        post.map((post) => {
+        promise.map((post) => {
           return (
             <div key={post.id} className='border border-blue-400 p-3 m-2 rounded-md'>
               <Link href={`/blog/${post.id}`}>
