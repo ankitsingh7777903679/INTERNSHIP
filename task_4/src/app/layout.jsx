@@ -12,7 +12,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "blogPage",
+  title: {
+    templete: "BlogPage %s",
+    default: "BlogPage",
+  },
   description: "A simple blog application",
 };
 
