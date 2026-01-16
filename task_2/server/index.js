@@ -3,13 +3,18 @@ const axios = require('axios')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const DimondRouter = require('./routers/dimondRoutes')
-require('dotenv').config()
+const authRouter = require('./routers/authRoutes')
+const dotenv = require('dotenv')
+const { varifyToken } = require('./middleware/authMiddleWare')
+dotenv.config()
 const app = express()
 app.use(express.json())
 app.use(cors())
 
 // routs
 app.use('/api/dimond/', DimondRouter)
+app.use('/api/auth/', authRouter)
+
 
 // Connect to MongoDB
 try {
