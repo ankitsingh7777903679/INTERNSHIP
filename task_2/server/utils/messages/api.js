@@ -1,4 +1,4 @@
-const { findDimondPrice } = require("../../controllers/dimond.controller");
+
 
 const msg = {
     dimond : {
@@ -46,6 +46,20 @@ const msg = {
             invalid_param: "Invalid parameters provided for updating dimond",
             skockId_exists: "Dimond with this stockId already exists",
         }
+    },
+
+    user: {
+        notFound: "User not found",
+        invalidCredentials: "Invalid password",
+        signupSuccess: "User registered successfully now you can login",
+        noLogin:"Error login",
+        getAllUsersError: "Error fetching users",
+        updatePermissionsError: "Error updating permissions",
+        signupError: "Error during user registration",
+        loginSuccess: "Login successful",
+        userExists: "User already exists",
+        updatePermissionsSuccess: "Permissions updated successfully",
+        updateStatusSuccess: "Status updated successfully",
     }
 };
 
