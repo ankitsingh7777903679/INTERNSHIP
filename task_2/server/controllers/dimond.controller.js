@@ -297,7 +297,7 @@ const listDimond = async (req, res) => {
     }
     
     try {
-        console.log(query);
+        // console.log(query);
         let totalDocs = await dimondModel.countDocuments(query);
         let data = await dimondModel.find(query)
             .skip((page - 1) * limit)
