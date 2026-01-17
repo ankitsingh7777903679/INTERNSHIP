@@ -3,7 +3,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 
 import { findDimond, findOneDimond } from '../api/dimondServer';
 import { useEffect } from 'react';
 function StoneGroupTable({ dimondValue, setDimondValue, setDimondId }) {
-  const dimondTableRow = ["Shape", "Color", "Clarity", "From", "To", "Price", "Ediet"];
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  // console.log("User:", user);
+  const userRole = user?.role || ''
+  const userPermissions = user?.permissions || [];
+  const hasStoneGroupEditPermission = userPermissions.includes( 'stoneGroup_update' ) && ( userRole === 'user')  || (userRole ==='admin');
+
+
+
+
+  const dimondTableRow = ["Shape", "Color", "Clarity", "From", "To", "Price"];
   const [dimondData, setDimondData] = React.useState([]);
 
   let fetchDimondData = async () => {
@@ -49,7 +59,9 @@ function StoneGroupTable({ dimondValue, setDimondValue, setDimondId }) {
               {dimondTableRow.map((header) => (
                 <TableHeadCell key={header}>{header}</TableHeadCell>
               ))}
-
+              {hasStoneGroupEditPermission && (
+                <TableHeadCell>Edit</TableHeadCell>
+              )}
             </TableRow>
           </TableHead>
           <TableBody className="divide-y">
@@ -61,9 +73,11 @@ function StoneGroupTable({ dimondValue, setDimondValue, setDimondId }) {
                 <TableCell>{dimond.from}</TableCell>
                 <TableCell>{dimond.to}</TableCell>
                 <TableCell>₹{dimond.price}</TableCell>
-                <TableCell>
-                  <button onClick={() => handleEdit(dimond._id)} className="text-blue-600 hover:underline">Edit</button>
-                </TableCell>
+                {hasStoneGroupEditPermission && (
+                  <TableCell>
+                    <button onClick={() => handleEdit(dimond._id)} className="text-blue-600 hover:underline">Edit</button>
+                  </TableCell>
+                )}
               </TableRow>
             )) : (
               <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">

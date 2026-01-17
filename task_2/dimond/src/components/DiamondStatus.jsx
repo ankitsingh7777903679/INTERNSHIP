@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import { changeDimondStatus } from '../api/dimondServer';
 
-function DiamondStatus({ diamondDataStatus, fetchDiamondData, diamondData }) {
+function DiamondStatus({ diamondDataStatus, fetchDiamondData, diamondData, hasEditPermission = true }) {
     const [statusValue, setStatusValue] = useState(diamondDataStatus);
     // console.log("Diamond Status Value:", diamondDataStatus);
     const statusOptions = [
@@ -45,7 +45,7 @@ function DiamondStatus({ diamondDataStatus, fetchDiamondData, diamondData }) {
                     <select
                         value={statusValue}
                         onChange={statusChange}
-                        disabled={statusValue === 'deleted'}
+                        disabled={statusValue === 'deleted' || !hasEditPermission}
                         className={`font-medium border rounded text-sm 
                             ${    getStatusStyle(statusValue)
 

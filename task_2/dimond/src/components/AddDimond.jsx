@@ -206,8 +206,6 @@ function AddDimond() {
     }
   }
 
-
-
   // const addDimond = async () => {
   //   let valuesd = {
   //     stockId: dimondValue.stockId,

@@ -12,6 +12,15 @@ import { useNavigate } from "react-router-dom";
 
 
 function DiamondListTable() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    // console.log("User:", user);
+    const userRole = user?.role || ''
+    const userPermissions = user?.permissions || [];
+    const hasDiamondEditPermission = userPermissions.includes('Diamond_update') && (userRole === 'user') || (userRole === 'admin');
+    const hasDiamondDeletePermission = userPermissions.includes('Diamond_delete') && (userRole === 'user') || (userRole === 'admin');
+
+
+
     const navigate = useNavigate()
 
     const [weight, setWeight] = useState([]);
@@ -148,7 +157,7 @@ function DiamondListTable() {
 
         setCurrentPage(1);
         fetchDiamondData();
-        
+
 
     }, [shape, color, clarity, weight, amount, status, searchQuery]);
 
@@ -177,8 +186,8 @@ function DiamondListTable() {
     // console.log("Diamond Data:", diamondData.find({ "weight": { "$exists": true } }));
 
     return (
-        <div className="p-4 mt-10">
-                {/* <ToastContainer /> */}
+        <div className="p-4 mt-10 max-w-[1500px] mx-auto">
+            {/* <ToastContainer /> */}
             <div className="flex items-center  pb-2 gap-3">
                 <div className="w-35">
                     <div className="mb-2 block">
@@ -318,8 +327,17 @@ function DiamondListTable() {
                         <TableHeadCell>discount</TableHeadCell>
                         <TableHeadCell>pricePerCarat</TableHeadCell>
                         <TableHeadCell>amount</TableHeadCell>
-                        <TableHeadCell>Edite</TableHeadCell>
-                        <TableHeadCell>Delete</TableHeadCell>
+                        {hasDiamondEditPermission && (
+                            <>
+                                <TableHeadCell>Edit</TableHeadCell>
+                            </>
+                        )}
+                        {hasDiamondDeletePermission && (
+                            <>
+                                <TableHeadCell>Delete</TableHeadCell>
+                            </>
+                        )}
+
                         <TableHeadCell>Status</TableHeadCell>
                     </TableHead>
                     <TableBody className="divide-y">
@@ -337,9 +355,17 @@ function DiamondListTable() {
                                     <TableCell>{diamondData.discount}</TableCell>
                                     <TableCell>{diamondData.pricePerCarat}</TableCell>
                                     <TableCell>{diamondData.amount}</TableCell>
-                                    <TableCell className="text-blue-500 cursor-pointer" onClick={() => onEditHandel(diamondData._id)}>Edit</TableCell>
-                                    <TableCell className="text-red-500 cursor-pointer" onClick={() => onDeleteHandel(diamondData._id)}>Delete</TableCell>
-                                    <TableCell><DiamondStatus diamondDataStatus={diamondData.status} diamondData={diamondData} fetchDiamondData={fetchDiamondData} /></TableCell>
+                                    {hasDiamondEditPermission && (
+                                        <>
+                                            <TableCell className={`text-blue-500  ${isDeleted ? 'disabled' : 'cursor-pointer'}`} > <button disabled={isDeleted} onClick={() => onEditHandel(diamondData._id)}>Edit</button></TableCell>
+                                        </>
+                                    )}
+                                    {hasDiamondDeletePermission && (
+                                        <>
+                                            <TableCell className={`text-red-500  ${isDeleted ? 'disabled' : 'cursor-pointer'}`} > <button disabled={isDeleted} onClick={() => onDeleteHandel(diamondData._id)}>{isDeleted ? 'Deleted' : 'Delete'}</button></TableCell>
+                                        </>
+                                    )}
+                                    <TableCell className={!hasDiamondEditPermission ? 'bg-gray-300 opacity-60' : ''}><DiamondStatus diamondDataStatus={diamondData.status} diamondData={diamondData} fetchDiamondData={fetchDiamondData} hasEditPermission={hasDiamondEditPermission} /></TableCell>
                                 </TableRow>
                             )
                         })}
